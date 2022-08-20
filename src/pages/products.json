@@ -1,0 +1,82 @@
+[
+    {
+        "id": 1,
+        "product_title": "Apples",
+        "price": 250,
+        "discount": 199,
+        "categories": "fruits",
+        "images": "https://i.ibb.co/MMBFnWM/apple.png"
+    },
+    {
+        "id": 2,
+        "product_title": "Bananas",
+        "price": 80,
+        "discount": 69,
+        "categories": "fruits",
+        "images": "https://i.ibb.co/ZVngtR0/banana.png"
+    },
+    {
+        "id": 3,
+        "product_title": "Cauliflower",
+        "price": 120,
+        "discount": 99,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/PGFCt50/cauliflower.png"
+    },
+    {
+        "id": 4,
+        "product_title": "Tomatoes",
+        "price": 70,
+        "discount": 65,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/h86Q0dw/tomato.png"
+    },
+    {
+        "id": 5,
+        "product_title": "Pumpkin",
+        "price": 80,
+        "discount": 55,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/5BWFKkD/pumpkin.png"
+    },
+    {
+        "id": 6,
+        "product_title": "Capsicum",
+        "price": 60,
+        "discount": 49,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/Fw460wc/capsicum.png"
+    },
+    {
+        "id": 7,
+        "product_title": "Strawberries",
+        "price": 299,
+        "discount": 259,
+        "categories": "fruits",
+        "images": "https://i.ibb.co/VBqrZH9/strawberries.png"
+    },
+    {
+        "id": 8,
+        "product_title": "Brinjal (Egg Plant)",
+        "price": 49,
+        "discount": 45,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/hKy8GRw/brinjal.png"
+    },
+    {
+        "id": 9,
+        "product_title": "Karela",
+        "price": 65,
+        "discount": 54,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/WH7tQLp/karela.png"
+    },
+    {
+        "id": 10,
+        "product_title": "Naga Chilli Pickle",
+        "price": 259,
+        "discount": 229,
+        "categories": "pickle",
+        "images": "https://i.ibb.co/QHG7vDz/product-1000x1000.png"
+    }
+]
