@@ -172,8 +172,8 @@ export default class dashboard extends React.Component {
             </ScrollView>
             <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent: "space-evenly", marginBottom: 90, marginTop:"5%"}}>
               {
-                this.state.products.map((item) =>(
-                  <View style={styles.productBox}>
+                this.state.products.map((item, key) =>(
+                  <View style={styles.productBox} key={key}>
                     <TouchableOpacity
                       onPress={() => {
                         this.props.navigation.navigate("ProductView", {
@@ -197,7 +197,7 @@ export default class dashboard extends React.Component {
                             <Text style={{textDecorationLine: 'line-through', textDecorationStyle: 'solid', marginLeft: 5, fontSize: 12.5, marginTop: 2}}>{item.price}</Text>
                           </View>
                           <View style={{flexDirection:"row"}}>
-                            <TouchableOpacity onPress={this.toggleLike}>
+                            <TouchableOpacity>
                               <Entypo name="heart-outlined" size={20} color="#95D573" style={{marginRight:20}}/>
                             </TouchableOpacity>
                           </View>

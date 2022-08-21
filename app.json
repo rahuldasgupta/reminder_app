@@ -1,8 +1,13 @@
 {
   "expo": {
-    "name": "organicNagaland",
-    "slug": "organicNagaland",
+    "name": "Organic Nagaland",
+    "slug": "organic-nagaland",
+    "scheme": "organic-nagaland",
     "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "orientation": "portrait",
     "icon": "./assets/splash.png",
     "userInterfaceStyle": "light",
@@ -18,9 +23,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.idan.orgaincb2b",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "package": "com.idan.orgaincb2b",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#FFFFFF"

@@ -52,7 +52,7 @@ export default class appIntro extends React.Component{
     );
   }
   _onDone = () => {
-    this.props.navigation.navigate("dashboard");
+    this.props.navigation.navigate("Dashboard");
   }
   _renderNextButton = () => {
     return (
@@ -65,7 +65,6 @@ export default class appIntro extends React.Component{
     return (
       <View style={styles.buttonCircle}>
         <AntDesign name="check" size={24} color="#9fd980" />
-
       </View>
     );
   };

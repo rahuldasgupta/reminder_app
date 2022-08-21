@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "product_title": "Apples",
+        "amount": 2500,
+        "quantity": 5,
+        "categories": "fruits",
+        "images": "https://i.ibb.co/MMBFnWM/apple.png"
+    },
+    {
+        "id": 2,
+        "product_title": "Tomatoes",
+        "amount": 170,
+        "quantity": 3,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/h86Q0dw/tomato.png"
+    },
+    {
+        "id": 3,
+        "product_title": "Cauliflower",
+        "amount": 1199,
+        "quantity": 10,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/PGFCt50/cauliflower.png"
+    },
+    {
+        "id": 4,
+        "product_title": "Strawberries",
+        "amount": 259,
+        "quantity": 1,
+        "categories": "vegetable",
+        "images": "https://i.ibb.co/VBqrZH9/strawberries.png"
+    }
+]

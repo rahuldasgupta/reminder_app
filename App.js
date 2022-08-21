@@ -6,7 +6,7 @@ import { LogBox } from 'react-native';
 //Pages
 import splash from './src/pages/splash';
 import appIntro from './src/pages/appIntro';
-import dashboard from './src/pages/dashboard';
+import Tabs from "./Tabs";
 
 const AuthStack = createStackNavigator();
 const AppLoad = createStackNavigator();
@@ -16,7 +16,6 @@ const AuthStackScreen = ({navigation}) => {
     <AuthStack.Navigator initialRouteName='Splash'>
       <AuthStack.Screen name="Splash" component={splash} options={{headerShown: false}}/>
       <AuthStack.Screen name="appIntro" component={appIntro} options={{headerShown: false}}/>
-      <AuthStack.Screen name="dashboard" component={dashboard} options={{headerShown: false}}/>
     </AuthStack.Navigator>
   );
 }
@@ -38,7 +37,7 @@ export default class App extends Component {
       <NavigationContainer>
         <AppLoad.Navigator initialRouteName='Home'>
           <AppLoad.Screen name="Home" component={AuthStackScreen} options={{headerShown: false}}/>
-          {/*<AppLoad.Screen name="Dashboard" component={Tabs} options={{headerShown: false}}/> */}
+          <AppLoad.Screen name="Dashboard" component={Tabs} options={{headerShown: false}}/>
         </AppLoad.Navigator>
       </NavigationContainer>
     );
