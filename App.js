@@ -1,15 +1,20 @@
 import React, {Component} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { LogBox } from 'react-native';
 
 //Pages
 import splash from './src/pages/splash';
 import appIntro from './src/pages/appIntro';
-import Tabs from "./Tabs";
+import dashboard from './src/pages/dashboard';
+import createReminder from './src/pages/createReminder';
+import DrawerContent from "./Drawer";
 
 const AuthStack = createStackNavigator();
+const DashboardStack = createStackNavigator();
 const AppLoad = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const AuthStackScreen = ({navigation}) => {
   return(
@@ -20,6 +25,14 @@ const AuthStackScreen = ({navigation}) => {
   );
 }
 
+const DashboardStackScreen = ({navigation}) => {
+  return(
+    <DashboardStack.Navigator initialRouteName='Dashboard'>
+      <DashboardStack.Screen name="Dashboard" component={dashboard} options={{headerShown: false}}/>
+      <DashboardStack.Screen name="Create Reminder" component={createReminder} options={{headerShown: false}}/>
+    </DashboardStack.Navigator>
+  );
+}
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -35,10 +48,10 @@ export default class App extends Component {
   render() {
     return (
       <NavigationContainer>
-        <AppLoad.Navigator initialRouteName='Home'>
+        <Drawer.Navigator initialRouteName='Home'  drawerStyle={{backgroundColor:'transparent', width:"90%"}} drawerContent={(props) => (<DrawerContent {...props} />)}>
           <AppLoad.Screen name="Home" component={AuthStackScreen} options={{headerShown: false}}/>
-          <AppLoad.Screen name="Dashboard" component={Tabs} options={{headerShown: false}}/>
-        </AppLoad.Navigator>
+          <Drawer.Screen name="Dashboard" component={DashboardStackScreen} />
+        </Drawer.Navigator>
       </NavigationContainer>
     );
   }
