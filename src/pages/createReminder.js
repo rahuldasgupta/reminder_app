@@ -8,6 +8,7 @@ import DatePicker from 'react-native-modern-datepicker';
 import moment from "moment";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RBSheet from "react-native-raw-bottom-sheet";
+import { Audio } from 'expo-av';
 import * as Notifications from "expo-notifications";
 
 export default class createReminder extends React.Component {
@@ -16,6 +17,7 @@ export default class createReminder extends React.Component {
         this.state = {
           id: Math.floor(Math.random() * 1000) + 1,
           reminderName: null,
+          reminderType:"Reminder",
 
           reminderDate: "Select Date",
           reminderTrueDate: null,
@@ -24,10 +26,12 @@ export default class createReminder extends React.Component {
           reminderTime: "10:10 AM",
           reminderTrueTime: null,
           timeModal: false,
+          reminderTypeModal: false,
 
-          reminderLabel: null,
           repeatMode: "Does not repeat",
           ringtone:"Default (Fresh Start)",
+          ringtoneFile:"default",
+          channelId: "default",
           vibration: true,
           priority:"",
 
@@ -174,14 +178,21 @@ export default class createReminder extends React.Component {
         })
     }
     addReminder = async () => {
-        let reminders = await AsyncStorage.getItem('remindersData');  
+        let reminders = await AsyncStorage.getItem('remindersData');
+
+        let reminderName = this.state.reminderName;
+        let timeValue = this.state.reminderTrueTime;
+        let trueTime = JSON.stringify(timeValue);
+        let timeFormated = trueTime.slice(11, 25);
+        let dateValue = this.state.reminderTrueDate;
+        let date_time = dateValue+timeFormated;
+
         let parsed = JSON.parse(reminders);
         if(parsed){
             parsed.push(
                 {
                     id: this.state.id,
                     reminderName: this.state.reminderName,
-                    reminderLabel: this.state.reminderLabel,
                     reminderDate: this.state.reminderDate,
                     reminderTrueDate: this.state.reminderTrueDate,
                     reminderTime: this.state.reminderTime,
@@ -189,7 +200,8 @@ export default class createReminder extends React.Component {
                     repeatMode: this.state.repeatMode,
                     ringtone: this.state.ringtone,
                     vibration: this.state.vibration,
-                    priority: this.state.priority
+                    priority: this.state.priority,
+                    dateTime: date_time
                 }
             )
             AsyncStorage.setItem('remindersData', JSON.stringify(parsed))
@@ -200,7 +212,6 @@ export default class createReminder extends React.Component {
                 {
                     id: "1",
                     reminderName: this.state.reminderName,
-                    reminderLabel: this.state.reminderLabel,
                     reminderDate: this.state.reminderDate,
                     reminderTrueDate: this.state.reminderTrueDate,
                     reminderTime: this.state.reminderTime,
@@ -208,39 +219,35 @@ export default class createReminder extends React.Component {
                     repeatMode: this.state.repeatMode,
                     ringtone: this.state.ringtone,
                     vibration: this.state.vibration,
-                    priority: this.state.priority
+                    priority: this.state.priority,
+                    dateTime: date_time
                 }
             )
             AsyncStorage.setItem('remindersData', JSON.stringify(remindersData))
         }
         console.log("Data Saved")
-        let reminderName = this.state.reminderName;
-        let timeValue = this.state.reminderTrueTime;
-        let trueTime = JSON.stringify(timeValue);
-        let timeFormated = trueTime.slice(11, 25);
-        let dateValue = this.state.reminderTrueDate;
-        let date_time = dateValue+timeFormated;
         this.createNotification(reminderName, date_time);
         this.props.navigation.navigate("Dashboard")
     }
     createNotification = async (name, time) => {
-        console.log(name)
-        console.log("Time Assigned ====>", time)
+        let channel = this.state.channelId;
+        let sounds = this.state.ringtoneFile;
+
+        console.log("Sounds and Channel", sounds, channel)
         var date = new Date(time);
         var seconds = Math.floor(date.getTime()/1000);
 
-        
         var dateNow = new Date();
-        console.log("Time Now ====>", dateNow)
         var secondsNow = Math.floor(dateNow.getTime()/1000);
 
         var secondsDifference = seconds-secondsNow
         console.log(secondsDifference)
-        await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
+        await Notifications.setNotificationChannelAsync("default", {
+            name: "default",
+            importance: Notifications.AndroidImportance.HIGH,
             vibrationPattern: [0, 250, 250, 250],
             lightColor: '#FF231F7C',
+            sound: 'Argon.wav'
         });
         Notifications.setNotificationHandler({
             handleNotification: async () => ({
@@ -258,12 +265,40 @@ export default class createReminder extends React.Component {
         await Notifications.scheduleNotificationAsync({
             content: {
               title: "You've a reminder ⏰",
+              sound: 'Argon.wav',
               body: name,
               data: { data: 'goes here' },
               autoDismiss: false,
             },
-            trigger: { seconds: secondsDifference },
+            trigger: {
+                seconds: secondsDifference,
+                channelId: "default",
+            },
         });
+    }
+    playSound = async (tune, fileName, channel) =>{
+        this.setState({
+            ringtone: tune,
+            ringtoneFile: fileName,
+            channelId: channel
+        })
+        const _sound = new Audio.Sound();
+        if(tune === "Bright Morning"){
+            await _sound.loadAsync(require('../../assets/sounds/BrightMorning.mp3'), {shouldPlay: true});
+            await _sound.setPositionAsync(0);
+            await _sound.playAsync();
+        }
+        if(tune === "Argon"){
+            await _sound.loadAsync(require('../../assets/sounds/Argon.mp3'), {shouldPlay: true});
+            await _sound.setPositionAsync(0);
+           await _sound.playAsync();
+        }
+        if(tune === "Carbon"){
+            await _sound.loadAsync(require('../../assets/sounds/Carbon.mp3'), {shouldPlay: true});
+            await _sound.setPositionAsync(0);
+            await _sound.playAsync();
+        }
+        
     }
     render(){
         return(
@@ -287,6 +322,128 @@ export default class createReminder extends React.Component {
                         />
                     </View>
                 </Modal>
+                <Modal animationInTiming={750} isVisible={this.state.reminderTypeModal} backdropOpacity={0.8} useNativeDriver={true}>
+                    <View style={{ backgroundColor: '#fff', width: "90%", height: 370, marginLeft:"5%", borderRadius: 24}}>
+                        <View style={{flexDirection:"row", justifyContent:"space-between", margin:"6%", marginBottom:"4%", alignItems:"center"}}>
+                            <TouchableOpacity onPress={() => this.setState({reminderTypeModal: false})}>
+                                <Text style={{color:"#9F9F9F", fontWeight:"bold", fontSize: 12.5}}>Cancel</Text>
+                            </TouchableOpacity>
+                            <Text style={{fontSize: 18, color:"#1E1E1E", fontWeight:"bold"}}>Reminder Event</Text>
+                            <TouchableOpacity onPress={() => this.setState({reminderTypeModal: false})}>
+                                <Text style={{color:"#3B4130", fontWeight:"bold", fontSize: 12.5}}>Done</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ borderTopColor:"#EBEBEB", borderTopWidth: 1}}></View>
+                        <Image
+                            source={require("../../assets/reminderType.png")}
+                            style={{resizeMode:"contain", justifyContent:"center", alignItems:"center", alignSelf:"center", marginTop:"6%", width:"90%"}}
+                        />
+                        <View style={{margin:"7%", marginBottom: 0}}>
+                            <TouchableOpacity onPress={() => this.setState({reminderType: "Reminder"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/silent.png")}
+                                            style={{height: 16, width: 16}}
+                                        />
+                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Reminder</Text>
+                                    </View>
+                                    {
+                                        this.state.reminderType === "Reminder" ?
+                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderType: "Tasks"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 16, width: 16}}
+                                        />
+                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Tasks</Text>
+                                    </View>
+                                    {
+                                        this.state.reminderType === "Tasks" ?
+                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderType: "Goals"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 16, width: 16}}
+                                        />
+                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Goals</Text>
+                                    </View>
+                                    {
+                                        this.state.reminderType === "Goals" ?
+                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderType: "Events"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 16, width: 16}}
+                                        />
+                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Events</Text>
+                                    </View>
+                                    {
+                                        this.state.reminderType === "Events" ?
+                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderType: "Birthday"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 16, width: 16}}
+                                        />
+                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Birthday</Text>
+                                    </View>
+                                    {
+                                        this.state.reminderType === "Birthday" ?
+                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderType: "Assignment"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 16, width: 16}}
+                                        />
+                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Assignment</Text>
+                                    </View>
+                                    {
+                                        this.state.reminderType === "Assignment" ?
+                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
                 <View style={{width:"100%", height: 125, backgroundColor:"#fff", elevation: 4, paddingTop: "5%", paddingLeft:"7%", paddingRight:"7%", flexDirection:"row", alignItems:"center", justifyContent:"space-between"}}>
                     <View>
                         <TouchableOpacity>
@@ -294,23 +451,12 @@ export default class createReminder extends React.Component {
                         </TouchableOpacity>
                     </View>
                     <View>
-                        <View style={{flexDirection:"row", alignItems:"center"}}>
-                            <TextInput
-                                style={{
-                                    color: "#000",
-                                    fontSize: 22,
-                                    fontWeight:"bold"
-                                }}
-                                value={this.state.reminderName}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                placeholder="Reminder"
-                                placeholderTextColor={"#000"}
-                                onChangeText={(text) =>  this.setState({reminderName: text})}
-                                returnKeyType="done"
-                            />
-                            <MaterialIcons name="edit" size={16} color="black" style={{padding:5, backgroundColor:"#E3EDD2", marginLeft: 10, borderRadius: 100}}/>
-                        </View>
+                        <TouchableOpacity onPress={() => this.setState({reminderTypeModal: true})}>
+                            <View style={{flexDirection:"row", alignItems:"center"}}>
+                                <Text style={{color:"#000", fontWeight:"bold", fontSize: 24}}>{this.state.reminderType}</Text>
+                                <MaterialIcons name="edit" size={16} color="black" style={{padding:5, backgroundColor:"#E3EDD2", marginLeft: 10, borderRadius: 100}}/>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                     <View></View>
                 </View>
@@ -330,12 +476,12 @@ export default class createReminder extends React.Component {
                                 fontWeight:"bold",
                                 marginLeft:"5%"
                             }}
-                            value={this.state.reminderLabel}
+                            value={this.state.reminderName}
                             autoCapitalize="none"
                             autoCorrect={false}
                             placeholder="Add Label"
                             placeholderTextColor={"#979797"}
-                            onChangeText={(text) =>  this.setState({reminderLabel: text})}
+                            onChangeText={(text) =>  this.setState({reminderName: text})}
                             returnKeyType="done"
                         />
                     </View>
@@ -441,7 +587,7 @@ export default class createReminder extends React.Component {
                                 }
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.RBSheet.open()}>
+                        <TouchableOpacity onPress={() => this.setState({reminderTypeModal: true})}>
                             <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"4.5%"}}>
                                 <View style={{flexDirection:"row", alignItems:"center"}}>
                                     <Image
@@ -526,7 +672,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ringtone: "Default (Fresh Start)"})}>
+                            <TouchableOpacity onPress={() => this.setState({ringtone: "Default (Fresh Start)", ringtoneFile:"default", channelId:"default"})}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
@@ -543,7 +689,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ringtone: "Piano"})}>
+                            <TouchableOpacity onPress={() => this.setState({ringtone: "Piano", ringtoneFile:"Piano.wav", channelId:"reminder-piano"})}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
@@ -560,7 +706,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ringtone: "Argon"})}>
+                            <TouchableOpacity onPress={() => this.playSound("Argon", "Argon.wav", "reminder-Argon")}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
@@ -577,7 +723,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ringtone: "Bright Morning"})}>
+                            <TouchableOpacity onPress={() => this.playSound("Bright Morning", "BrightMorning.wav", "reminder-BrightMorning")}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
@@ -594,7 +740,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ringtone: "Carbon"})}>
+                            <TouchableOpacity onPress={() => this.playSound("Carbon", "Carbon.wav", "reminder-Carbon")}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image

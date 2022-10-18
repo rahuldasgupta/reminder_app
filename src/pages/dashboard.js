@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Image, Text, TouchableOpacity, Dimensions, ScrollView, StyleSheet } from 'react-native';
-import { Feather, Entypo, AntDesign } from '@expo/vector-icons';
+import { Feather, Entypo, AntDesign, Ionicons} from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { Switch } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import moment from "moment";
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -44,6 +45,26 @@ export default class dashboard extends React.Component {
     console.log("Updated Reminders ===> ", parsed)
     AsyncStorage.setItem('remindersData', JSON.stringify(parsed))
     this.componentDidMount();
+  }
+  showTimeLeft = (data) => {
+    var dateNow = new Date();
+    const now = moment(dateNow);
+    const deadline = moment(data.dateTime);
+    const difference = deadline.diff(now);
+    const differenceDuration = moment.duration(difference);
+    let daysLeft = differenceDuration.days()
+    let hoursLeft = differenceDuration.hours()
+    let minsLeft = differenceDuration.minutes()
+    return(
+      <>
+      {
+        daysLeft > 0 ?
+          <Text style={{fontWeight:"bold", color:"#587424", marginLeft: 5, fontSize: 14}}>in {daysLeft}d {hoursLeft}h</Text>
+        :
+          <Text style={{fontWeight:"bold", color:"#587424", marginLeft: 5, fontSize: 14}}>in {hoursLeft}h {minsLeft}m</Text>
+      }
+      </>
+    )
   }
   render() {
       return (
@@ -102,10 +123,10 @@ export default class dashboard extends React.Component {
                       <Text style={{fontSize: 12, lineHeight:12, marginTop: -5, color:"#7E7E7E"}}>Wanna miss these?</Text>
                       <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%", alignItems:"center"}}>
                         <View style={{flexDirection:"row"}}>
-                          <AntDesign name="calendar" size={18} color="#587424" />
-                          <Text style={{fontWeight:"500", color:"#587424", marginLeft: 8, fontSize: 13}}>{data.item.reminderDate}</Text>
+                          <Ionicons name="time-outline" size={19} color="#587424" />
+                          {this.showTimeLeft(data.item)}
                         </View>
-                        <Text style={{fontWeight:"500", color:"#000000", fontSize: 20}}>{data.item.reminderTime}</Text>
+                        <Text style={{fontWeight:"bold", color:"#000000", fontSize: 24}}>{data.item.reminderTime}</Text>
                       </View>
                     </View>
                   :
@@ -123,10 +144,10 @@ export default class dashboard extends React.Component {
                       <Text style={{fontSize: 12, lineHeight:12, marginTop: -5, color:"#7E7E7E"}}>Wanna miss these?</Text>
                       <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%", alignItems:"center"}}>
                         <View style={{flexDirection:"row"}}>
-                          <AntDesign name="calendar" size={18} color="#587424" />
-                          <Text style={{fontWeight:"500", color:"#587424", marginLeft: 8, fontSize: 13}}>{data.item.reminderDate}</Text>
+                          <Ionicons name="time-outline" size={19} color="#587424" />
+                          {this.showTimeLeft(data.item)}
                         </View>
-                        <Text style={{fontWeight:"500", color:"#000000", fontSize: 20}}>{data.item.reminderTime}</Text>
+                        <Text style={{fontWeight:"bold", color:"#000000", fontSize: 24}}>{data.item.reminderTime}</Text>
                       </View>
                     </View>
                   :
@@ -144,10 +165,10 @@ export default class dashboard extends React.Component {
                       <Text style={{fontSize: 12, lineHeight:12, marginTop: -5, color:"#7E7E7E"}}>Wanna miss these?</Text>
                       <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%", alignItems:"center"}}>
                         <View style={{flexDirection:"row"}}>
-                          <AntDesign name="calendar" size={18} color="#587424" />
-                          <Text style={{fontWeight:"500", color:"#587424", marginLeft: 8, fontSize: 13}}>{data.item.reminderDate}</Text>
+                          <Ionicons name="time-outline" size={19} color="#587424" />
+                          {this.showTimeLeft(data.item)}
                         </View>
-                        <Text style={{fontWeight:"500", color:"#000000", fontSize: 20}}>{data.item.reminderTime}</Text>
+                        <Text style={{fontWeight:"bold", color:"#000000", fontSize: 24}}>{data.item.reminderTime}</Text>
                       </View>
                     </View>
                   :

@@ -8,6 +8,19 @@
       "ios",
       "android"
     ],
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#72A01C",
+          "sounds": [
+            "./assets/sounds/Argon.wav",
+            "./assets/sounds/BrightMorning.wav",
+            "./assets/sounds/Carbon.wav"
+          ]
+        }
+      ]
+    ],
     "orientation": "portrait",
     "icon": "./assets/splash.png",
     "userInterfaceStyle": "light",
@@ -33,7 +46,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "useNextNotificationsApi": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
