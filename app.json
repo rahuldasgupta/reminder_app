@@ -1,11 +1,30 @@
 {
   "expo": {
-    "name": "commonReminder",
+    "name": "ReminderApp",
     "slug": "commonReminder",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#72A01C",
+          "sounds": [
+            "./assets/sounds/Argon.wav",
+            "./assets/sounds/BrightMorning.wav",
+            "./assets/sounds/Carbon.wav"
+          ]
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow Common Reminder to access your microphone."
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -18,13 +37,23 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.redcrix.reminder",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0cf42c77-3faf-4ece-9baf-d47d7dbd5821"
+      }
     }
   }
 }
