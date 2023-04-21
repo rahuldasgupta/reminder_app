@@ -1,14 +1,16 @@
 {
   "cli": {
-    "version": ">= 3.9.2"
+    "version": ">= 3.9.2",
+    "requireCommit": true
   },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
-      }
+        "resourceClass": "m1-medium"
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -16,13 +18,15 @@
         "buildType": "apk"
       },
       "ios": {
-        "resourceClass": "m-medium"
-      }
+        "resourceClass": "m1-medium"
+      },
+      "channel": "preview"
     },
     "production": {
       "ios": {
-        "resourceClass": "m-medium"
-      }
+        "resourceClass": "m1-medium"
+      },
+      "channel": "production"
     }
   },
   "submit": {

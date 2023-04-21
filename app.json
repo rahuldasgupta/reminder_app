@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ReminderApp",
+    "name": "commonReminder",
     "slug": "commonReminder",
     "version": "1.0.1",
     "orientation": "portrait",
@@ -16,12 +16,6 @@
             "./assets/sounds/BrightMorning.wav",
             "./assets/sounds/Carbon.wav"
           ]
-        }
-      ],
-      [
-        "expo-av",
-        {
-          "microphonePermission": "Allow Common Reminder to access your microphone."
         }
       ]
     ],
