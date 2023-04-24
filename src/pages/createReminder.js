@@ -251,7 +251,7 @@ export default class createReminder extends React.Component {
             importance: Notifications.AndroidImportance.HIGH,
             vibrationPattern: [0, 250, 250, 250],
             lightColor: '#FF231F7C',
-            sound: 'Argon.wav'
+            sound: 'argon.wav'
         });
         Notifications.setNotificationHandler({
             handleNotification: async () => ({
@@ -269,7 +269,7 @@ export default class createReminder extends React.Component {
         await Notifications.scheduleNotificationAsync({
             content: {
               title: "You've a reminder ⏰",
-              sound: 'Argon.wav',
+              sound: 'argon.wav',
               body: name,
               data: { data: 'goes here' },
               autoDismiss: false,
@@ -288,17 +288,17 @@ export default class createReminder extends React.Component {
         })
         _sound = new Audio.Sound();
         if(tune === "Bright Morning"){
-            await _sound.loadAsync(require('../../assets/sounds/BrightMorning.mp3'), {shouldPlay: true});
+            await _sound.loadAsync(require('../../assets/sounds/brightmorning.mp3'), {shouldPlay: true});
             await _sound.setPositionAsync(0);
             await _sound.playAsync();
         }
         if(tune === "Argon"){
-            await _sound.loadAsync(require('../../assets/sounds/Argon.mp3'), {shouldPlay: true});
+            await _sound.loadAsync(require('../../assets/sounds/argon.mp3'), {shouldPlay: true});
             await _sound.setPositionAsync(0);
            await _sound.playAsync();
         }
         if(tune === "Carbon"){
-            await _sound.loadAsync(require('../../assets/sounds/Carbon.mp3'), {shouldPlay: true});
+            await _sound.loadAsync(require('../../assets/sounds/carbon.mp3'), {shouldPlay: true});
             await _sound.setPositionAsync(0);
             await _sound.playAsync();
         }
@@ -463,7 +463,7 @@ export default class createReminder extends React.Component {
                 </Modal>
                 <View style={{width:"100%", height: 125, backgroundColor:"#fff", elevation: 4, paddingTop: "5%", paddingLeft:"7%", paddingRight:"7%", flexDirection:"row", alignItems:"center", justifyContent:"space-between"}}>
                     <View>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={()=>this.props.navigation.goBack(null)}>
                             <Ionicons name="arrow-back" size={24} color="black" />
                         </TouchableOpacity>
                     </View>
@@ -706,7 +706,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.changeSong("Argon", "Argon.wav", "reminder-Argon")}>
+                            <TouchableOpacity onPress={() => this.changeSong("Argon", "argon.wav", "reminder-Argon")}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
@@ -723,7 +723,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.changeSong("Bright Morning", "BrightMorning.wav", "reminder-BrightMorning")}>
+                            <TouchableOpacity onPress={() => this.changeSong("Bright Morning", "brightmorning.wav", "reminder-BrightMorning")}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
@@ -740,7 +740,7 @@ export default class createReminder extends React.Component {
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.changeSong("Carbon", "Carbon.wav", "reminder-Carbon")}>
+                            <TouchableOpacity onPress={() => this.changeSong("Carbon", "carbon.wav", "reminder-Carbon")}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image

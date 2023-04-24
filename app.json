@@ -12,9 +12,9 @@
         {
           "color": "#72A01C",
           "sounds": [
-            "./assets/sounds/Argon.wav",
-            "./assets/sounds/BrightMorning.wav",
-            "./assets/sounds/Carbon.wav"
+            "./assets/sounds/argon.wav",
+            "./assets/sounds/brightmorning.wav",
+            "./assets/sounds/carbon.wav"
           ]
         }
       ]
