@@ -3,15 +3,30 @@ import { Image, View, Text, TextInput, TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import Modal from "react-native-modal";
-import { Ionicons, MaterialIcons, Entypo } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
 import DatePicker from 'react-native-modern-datepicker';
 import moment from "moment";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { Audio } from 'expo-av';
 import * as Notifications from "expo-notifications";
+import { ScrollView } from "react-native-gesture-handler";
+import Toast, { InfoToast } from 'react-native-toast-message';
 
-let _sound = null
+let _sound = null;
+const toastConfig = {
+    info: (props) => (
+        <InfoToast
+          {...props}
+          style={{ borderLeftColor: '#ffdf00' }}
+          contentContainerStyle={{ paddingHorizontal: 15, }}
+          text1Style={{
+            fontSize: 14,
+              fontFamily:"Poppins-Medium"
+          }}
+        />
+    )
+  };
 
 export default class createReminder extends React.Component {
     constructor(props) {
@@ -19,65 +34,141 @@ export default class createReminder extends React.Component {
         this.state = {
           id: Math.floor(Math.random() * 1000) + 1,
           reminderName: null,
+          reminderDescription: "",
           reminderType:"Reminder",
+          
+          is_2_Tasks_Active: false,
+          is_3_Tasks_Active: false,
+          is_4_Tasks_Active: false,
+          is_5_Tasks_Active: false,
+
+          Tasks_1_Data: null,
+          Tasks_2_Data: null,
+          Tasks_3_Data: null,
+          Tasks_4_Data: null,
+          Tasks_5_Data: null,
 
           reminderDate: "Select Date",
           reminderTrueDate: null,
           dateModal: false,
+          repeatModal: false,
 
           reminderTime: "10:10 AM",
-          reminderTrueTime: null,
+          reminderTrueTime: "2023-06-23T04:40:46.789Z",
           timeModal: false,
           reminderTypeModal: false,
 
           repeatMode: "Does not repeat",
           ringtone:"Default (Fresh Start)",
           ringtoneFile:"default",
-          channelId: "default",
           vibration: true,
           priority:"Low",
 
           date_1: null,
           day_1: null,
+          date_1_true: null,
+          date_1_unformated: null,
+
           date_2: null,
           day_2: null,
+          date_2_true: null,
+          date_2_unformated: null,
+
           date_3: null,
           day_3: null,
+          date_3_true: null,
+          date_3_unformated: null,
+
           date_4: null,
           day_4: null,
+          date_4_true: null,
+          date_4_unformated: null,
+
           date_5: null,
           day_5: null,
+          date_5_true: null,
+          date_5_unformated: null,
+
           date_6: null,
           day_6: null,
+          date_6_true: null,
+          date_6_unformated: null,
 
           currentDate: moment().format('YYYY-MM-DD'),
         };
     }
     checkDates = async () => {
-        var d = new Date()
+        var d = new Date();
+        console.log(d.toLocaleDateString())
+
+        var inputDate = d.toLocaleDateString();
+        var parsedDate = moment(inputDate, 'D/M/YYYY');
+        var outputDate = parsedDate.format('Do MMMM, YYYY');
+        var trueDate = parsedDate.format('YYYY-MM-DD')
         this.setState({
-            date_1: d.toLocaleDateString().slice(0, 2)
+            date_1: d.toLocaleDateString().slice(0, 2).replace(/\//g, ''),
+            date_1_unformated: outputDate,
+            date_1_true: trueDate
         })
+
         d.setDate(d.getDate() + 1)
+        var inputDate = d.toLocaleDateString();
+        var parsedDate = moment(inputDate, 'D/M/YYYY');
+        var outputDate = parsedDate.format('Do MMMM, YYYY');
+        var trueDate = parsedDate.format('YYYY-MM-DD')
         this.setState({
-            date_2: d.toLocaleDateString().slice(0, 2)
+            date_2: d.toLocaleDateString().slice(0, 2).replace(/\//g, ''),
+            date_2_unformated: outputDate,
+            date_2_true: trueDate
         })
+
+
         d.setDate(d.getDate() + 1)
+        var inputDate = d.toLocaleDateString();
+        var parsedDate = moment(inputDate, 'D/M/YYYY');
+        var outputDate = parsedDate.format('Do MMMM, YYYY');
+        var trueDate = parsedDate.format('YYYY-MM-DD')
         this.setState({
-            date_3: d.toLocaleDateString().slice(0, 2)
+            date_3: d.toLocaleDateString().slice(0, 2).replace(/\//g, ''),
+            date_3_unformated: outputDate,
+            date_3_true: trueDate
         })
+
         d.setDate(d.getDate() + 1)
+        var inputDate = d.toLocaleDateString();
+        var parsedDate = moment(inputDate, 'D/M/YYYY');
+        var outputDate = parsedDate.format('Do MMMM, YYYY');
+        var trueDate = parsedDate.format('YYYY-MM-DD')
         this.setState({
-            date_4: d.toLocaleDateString().slice(0, 2)
+            date_4: d.toLocaleDateString().slice(0, 2).replace(/\//g, ''),
+            date_4_unformated: outputDate,
+            date_4_true: trueDate
         })
+
         d.setDate(d.getDate() + 1)
+        var inputDate = d.toLocaleDateString();
+        var parsedDate = moment(inputDate, 'D/M/YYYY');
+        var outputDate = parsedDate.format('Do MMMM, YYYY');
+        var trueDate = parsedDate.format('YYYY-MM-DD')
         this.setState({
-            date_5: d.toLocaleDateString().slice(0, 2)
+            date_5: d.toLocaleDateString().slice(0, 2).replace(/\//g, ''),
+            date_5_unformated: outputDate,
+            date_5_true: trueDate
         })
-        d.setDate(d.getDate() + 1)
+
+
+        d.setDate(d.getDate() + 1);
+        var inputDate = d.toLocaleDateString();
+        var parsedDate = moment(inputDate, 'D/M/YYYY');
+        var outputDate = parsedDate.format('Do MMMM, YYYY');
+        var trueDate = parsedDate.format('YYYY-MM-DD')
         this.setState({
-            date_6: d.toLocaleDateString().slice(0, 2)
+            date_6: d.toLocaleDateString().slice(0, 2).replace(/\//g, ''),
+            date_6_unformated: outputDate,
+            date_6_true: trueDate
         })
+
+
         const weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
         var days = new Date();
 
@@ -158,6 +249,12 @@ export default class createReminder extends React.Component {
         if(parsed){
             console.log(parsed)
         }
+        const currentDate = moment().format('Do MMMM, YYYY');
+        let dateTrueFormat = moment().format('YYYY-MM-DD');
+        this.setState({
+            reminderDate: currentDate, 
+            reminderTrueDate: dateTrueFormat
+        })
     }
     changeDate = (value) => {
         let year = value.slice(0, 4)
@@ -166,7 +263,7 @@ export default class createReminder extends React.Component {
         let dateUnformat = day + "/" + month + "/" + year
         let dateTrueFormat = year + "-" + month + "-" + day
         let dateFormated = moment(dateUnformat, 'DD/MM/YYYY', true).format('Do MMMM, YYYY')
-        console.log(dateFormated)
+        console.log("DATE FORMATED", dateFormated, dateTrueFormat)
         this.setState({
             reminderDate: dateFormated, 
             reminderTrueDate: dateTrueFormat,
@@ -175,69 +272,92 @@ export default class createReminder extends React.Component {
     }
     changeTime = (value) => {
         console.log(value)
-        let timeFormatted = moment(value, 'ddd DD-MMM-YYYY, hh:mm A').format('hh:mm A')
+        let timeFormatted = moment(value, 'ddd DD-MMM-YYYY, hh:mm A').format('hh:mm A');
+        console.log(timeFormatted)
         this.setState({
             reminderTime: timeFormatted,
-            reminderTrueTime: value
+            reminderTrueTime: value,
+            timeModal: false
         })
     }
     addReminder = async () => {
         let reminders = await AsyncStorage.getItem('remindersData');
 
-        let reminderName = this.state.reminderName;
-        let timeValue = this.state.reminderTrueTime;
-        let trueTime = JSON.stringify(timeValue);
-        let timeFormated = trueTime.slice(11, 25);
-        let dateValue = this.state.reminderTrueDate;
-        let date_time = dateValue+timeFormated;
-
-        let parsed = JSON.parse(reminders);
-        if(parsed){
-            parsed.push(
-                {
-                    id: this.state.id,
-                    reminderName: this.state.reminderName,
-                    reminderDate: this.state.reminderDate,
-                    reminderTrueDate: this.state.reminderTrueDate,
-                    reminderTime: this.state.reminderTime,
-                    reminderTrueTime: this.state.reminderTrueTime,
-                    repeatMode: this.state.repeatMode,
-                    ringtone: this.state.ringtone,
-                    vibration: this.state.vibration,
-                    priority: this.state.priority,
-                    dateTime: date_time
-                }
-            )
-            AsyncStorage.setItem('remindersData', JSON.stringify(parsed))
+        if(this.state.reminderName == "" || this.state.reminderName == null){
+            Toast.show({
+                type: 'info',
+                text1: 'Label cannot be empty'
+            });
         }
         else{
-            let remindersData = [];
-            remindersData.push(
-                {
-                    id: "1",
-                    reminderName: this.state.reminderName,
-                    reminderDate: this.state.reminderDate,
-                    reminderTrueDate: this.state.reminderTrueDate,
-                    reminderTime: this.state.reminderTime,
-                    reminderTrueTime: this.state.reminderTrueTime,
-                    repeatMode: this.state.repeatMode,
-                    ringtone: this.state.ringtone,
-                    vibration: this.state.vibration,
-                    priority: this.state.priority,
-                    dateTime: date_time
-                }
-            )
-            AsyncStorage.setItem('remindersData', JSON.stringify(remindersData))
+            let reminderName = this.state.reminderName;
+            let timeValue = this.state.reminderTrueTime;
+            let trueTime = JSON.stringify(timeValue);
+            let timeFormated = trueTime.slice(11, 25);
+            let dateValue = this.state.reminderTrueDate;
+            let date_time = dateValue+timeFormated;
+            let tasksArr = [
+                this.state.Tasks_1_Data,
+                this.state.Tasks_2_Data,
+                this.state.Tasks_3_Data,
+                this.state.Tasks_4_Data,
+                this.state.Tasks_5_Data
+            ]
+
+            let parsed = JSON.parse(reminders);
+            if(parsed){
+                parsed.push(
+                    {
+                        id: this.state.id,
+                        reminderName: this.state.reminderName,
+                        reminderDescription: this.state.reminderDescription,
+                        tasksArray: tasksArr,
+                        reminderDate: this.state.reminderDate,
+                        reminderTrueDate: this.state.reminderTrueDate,
+                        reminderTime: this.state.reminderTime,
+                        reminderTrueTime: this.state.reminderTrueTime,
+                        repeatMode: this.state.repeatMode,
+                        ringtone: this.state.ringtone,
+                        vibration: this.state.vibration,
+                        priority: this.state.priority,
+                        dateTime: date_time,
+                        isActive: true
+                    }
+                )
+                AsyncStorage.setItem('remindersData', JSON.stringify(parsed))
+            }
+            else{
+                let remindersData = [];
+                remindersData.push(
+                    {
+                        id: 1,
+                        reminderName: this.state.reminderName,
+                        reminderDescription: this.state.reminderDescription,
+                        tasksArray: tasksArr,
+                        reminderDate: this.state.reminderDate,
+                        reminderTrueDate: this.state.reminderTrueDate,
+                        reminderTime: this.state.reminderTime,
+                        reminderTrueTime: this.state.reminderTrueTime,
+                        repeatMode: this.state.repeatMode,
+                        ringtone: this.state.ringtone,
+                        vibration: this.state.vibration,
+                        priority: this.state.priority,
+                        dateTime: date_time,
+                        isActive: true
+                    }
+                )
+                AsyncStorage.setItem('remindersData', JSON.stringify(remindersData))
+            }
+            console.log("Data Saved")
+            this.createNotification(reminderName, date_time);
+            this.props.navigation.navigate("Dashboard")
         }
-        console.log("Data Saved")
-        this.createNotification(reminderName, date_time);
-        this.props.navigation.navigate("Dashboard")
+        
     }
     createNotification = async (name, time) => {
-        let channel = this.state.channelId;
         let sounds = this.state.ringtoneFile;
+        console.log("Sounds and Channel", sounds)
 
-        console.log("Sounds and Channel", sounds, channel)
         var date = new Date(time);
         var seconds = Math.floor(date.getTime()/1000);
 
@@ -246,12 +366,10 @@ export default class createReminder extends React.Component {
 
         var secondsDifference = seconds-secondsNow
         console.log(secondsDifference)
-        await Notifications.setNotificationChannelAsync("default", {
-            name: "default",
+        await Notifications.setNotificationChannelAsync("new-emails", {
+            name: "E-mail notifications",
             importance: Notifications.AndroidImportance.HIGH,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-            sound: 'argon.wav'
+            sound: sounds == "default" ? sounds : "default"
         });
         Notifications.setNotificationHandler({
             handleNotification: async () => ({
@@ -269,22 +387,21 @@ export default class createReminder extends React.Component {
         await Notifications.scheduleNotificationAsync({
             content: {
               title: "You've a reminder ⏰",
-              sound: 'argon.wav',
+              sound: sounds == "default" ? sounds : "default",
               body: name,
-              data: { data: 'goes here' },
               autoDismiss: false,
+              vibrate: false,
             },
             trigger: {
                 seconds: secondsDifference,
-                channelId: "default",
+                channelId: "new-emails",
             },
         });
     }
-    playSound = async (tune, fileName, channel) =>{
+    playSound = async (tune, fileName) =>{
         this.setState({
             ringtone: tune,
             ringtoneFile: fileName,
-            channelId: channel
         })
         _sound = new Audio.Sound();
         if(tune === "Bright Morning"){
@@ -310,17 +427,22 @@ export default class createReminder extends React.Component {
         }
         this.RBSheet.close()
     }
-    changeSong = async(tune, fileName, channel) => {
+    stopSong = async() => {
         if(_sound){
             await _sound.stopAsync();
         }
-        this.playSound(tune, fileName, channel)
+    }
+    changeSong = async(tune, fileName) => {
+        if(_sound){
+            await _sound.stopAsync();
+        }
+        this.playSound(tune, fileName)
     }
     render(){
         return(
             <View style={{flex: 1, backgroundColor:"#fff"}}>
               <StatusBar backgroundColor={"#fff"} style="dark" />
-                <Modal isVisible={this.state.dateModal} backdropOpacity={0.8} useNativeDriver={true}>
+                <Modal isVisible={this.state.dateModal} onBackdropPress={() => this.setState({dateModal: false})} backdropOpacity={0.8} useNativeDriver={true}>
                     <View style={{ backgroundColor: '#fff', width: "90%", height: 380, justifyContent:"center", alignItems:"center", alignSelf:"center", borderRadius: 15}}>
                         <DatePicker
                             mode="calendar"
@@ -339,15 +461,15 @@ export default class createReminder extends React.Component {
                         />
                     </View>
                 </Modal>
-                <Modal isVisible={this.state.reminderTypeModal} backdropOpacity={0.8} useNativeDriver={true}>
-                    <View style={{ backgroundColor: '#fff', width: "90%", height: 370, marginLeft:"5%", borderRadius: 24}}>
+                <Modal isVisible={this.state.reminderTypeModal} onBackdropPress={() => this.setState({reminderTypeModal: false})} backdropOpacity={0.8} useNativeDriver={true}>
+                    <View style={{ backgroundColor: '#fff', width: "90%", height: 383, marginLeft:"5%", borderRadius: 24}}>
                         <View style={{flexDirection:"row", justifyContent:"space-between", margin:"6%", marginBottom:"4%", alignItems:"center"}}>
                             <TouchableOpacity onPress={() => this.setState({reminderTypeModal: false})}>
-                                <Text style={{color:"#9F9F9F", fontWeight:"bold", fontSize: 12.5}}>Cancel</Text>
+                                <Text style={{color:"#9F9F9F", fontFamily:"Poppins-Medium", fontSize: 13}}>Cancel</Text>
                             </TouchableOpacity>
-                            <Text style={{fontSize: 18, color:"#1E1E1E", fontWeight:"bold"}}>Reminder Event</Text>
+                            <Text style={{fontSize: 18, color:"#1E1E1E", fontFamily:"Poppins-Medium"}}>Reminder Event</Text>
                             <TouchableOpacity onPress={() => this.setState({reminderTypeModal: false})}>
-                                <Text style={{color:"#3B4130", fontWeight:"bold", fontSize: 12.5}}>Done</Text>
+                                <Text style={{color:"#3B4130", fontFamily:"Poppins-Medium", fontSize: 13}}>Done</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={{ borderTopColor:"#EBEBEB", borderTopWidth: 1}}></View>
@@ -360,99 +482,99 @@ export default class createReminder extends React.Component {
                                 <View style={{flexDirection:"row", justifyContent:"space-between"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
-                                            source={require("../../assets/silent.png")}
-                                            style={{height: 16, width: 16}}
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Reminder</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Reminder</Text>
                                     </View>
                                     {
                                         this.state.reminderType === "Reminder" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setState({reminderType: "Tasks"})}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Tasks</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Tasks</Text>
                                     </View>
                                     {
                                         this.state.reminderType === "Tasks" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setState({reminderType: "Goals"})}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Goals</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Goals</Text>
                                     </View>
                                     {
                                         this.state.reminderType === "Goals" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setState({reminderType: "Events"})}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Events</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Events</Text>
                                     </View>
                                     {
                                         this.state.reminderType === "Events" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setState({reminderType: "Birthday"})}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Birthday</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Birthday</Text>
                                     </View>
                                     {
                                         this.state.reminderType === "Birthday" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => this.setState({reminderType: "Assignment"})}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Assignment</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Assignment</Text>
                                     </View>
                                     {
                                         this.state.reminderType === "Assignment" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
@@ -461,193 +583,458 @@ export default class createReminder extends React.Component {
                         </View>
                     </View>
                 </Modal>
-                <View style={{width:"100%", height: 125, backgroundColor:"#fff", elevation: 4, paddingTop: "5%", paddingLeft:"7%", paddingRight:"7%", flexDirection:"row", alignItems:"center", justifyContent:"space-between"}}>
+                <Modal isVisible={this.state.repeatModal} onBackdropPress={() => this.setState({repeatModal: false})} backdropOpacity={0.8} useNativeDriver={true}>
+                    <View style={{ backgroundColor: '#fff', width: "90%", height: 315, marginLeft:"5%", borderRadius: 24}}>
+                        <View style={{flexDirection:"row", justifyContent:"space-between", margin:"6%", marginBottom:"4%", alignItems:"center"}}>
+                            <TouchableOpacity onPress={() => this.setState({repeatModal: false})}>
+                                <Text style={{color:"#9F9F9F", fontFamily:"Poppins-Medium", fontSize: 13}}>Cancel</Text>
+                            </TouchableOpacity>
+                            <Text style={{fontSize: 18, color:"#1E1E1E", fontFamily:"Poppins-Medium"}}>Repeatation</Text>
+                            <TouchableOpacity onPress={() => this.setState({repeatModal: false})}>
+                                <Text style={{color:"#3B4130", fontFamily:"Poppins-Medium", fontSize: 13}}>Done</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ borderTopColor:"#EBEBEB", borderTopWidth: 1}}></View>
+                        <Image
+                            source={require("../../assets/reminderType.png")}
+                            style={{resizeMode:"contain", justifyContent:"center", alignItems:"center", alignSelf:"center", marginTop:"6%", width:"90%"}}
+                        />
+                        <View style={{margin:"7%", marginBottom: 0}}>
+                            <TouchableOpacity onPress={() => this.setState({repeatMode: "Does not repeat"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 17, width: 17}}
+                                        />
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Does not repeat</Text>
+                                    </View>
+                                    {
+                                        this.state.repeatMode === "Does not repeat" ?
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({repeatMode: "Daily"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 17, width: 17}}
+                                        />
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Daily</Text>
+                                    </View>
+                                    {
+                                        this.state.repeatMode === "Daily" ?
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({repeatMode: "Weekly"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between",  marginTop:"3.5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 17, width: 17}}
+                                        />
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Weekly</Text>
+                                    </View>
+                                    {
+                                        this.state.repeatMode === "Weekly" ?
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({repeatMode: "Yearly"})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between",  marginTop:"3.5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/ringtone.png")}
+                                            style={{height: 17, width: 17}}
+                                        />
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Yearly</Text>
+                                    </View>
+                                    {
+                                        this.state.repeatMode === "Yearly" ?
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+                <View style={{width:"100%", height: 120, backgroundColor:"#fff", elevation: 4, paddingTop: "7%", paddingLeft:"5%", paddingRight:"5%", flexDirection:"row", alignSelf:"center", alignItems:"center", justifyContent:"space-between"}}>
                     <View>
                         <TouchableOpacity onPress={()=>this.props.navigation.goBack(null)}>
                             <Ionicons name="arrow-back" size={24} color="black" />
                         </TouchableOpacity>
                     </View>
-                    <View>
-                        <TouchableOpacity onPress={() => this.setState({reminderTypeModal: true})}>
-                            <View style={{flexDirection:"row", alignItems:"center"}}>
-                                <Text style={{color:"#000", fontWeight:"bold", fontSize: 24}}>{this.state.reminderType}</Text>
-                                <MaterialIcons name="edit" size={16} color="black" style={{padding:5, backgroundColor:"#E3EDD2", marginLeft: 10, borderRadius: 100}}/>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity style={{alignItems:"center", alignSelf:"center"}} onPress={() => this.setState({reminderTypeModal: true})}>
+                        <View style={{flexDirection:"row", alignItems:"center"}}>
+                            <Text style={{color:"#000", fontFamily:"Poppins-Medium", fontSize: 23}}>{this.state.reminderType}</Text>
+                            <MaterialIcons name="edit" size={16} color="black" style={{padding:5, backgroundColor:"#E3EDD2", marginLeft: 10, borderRadius: 100}}/>
+                        </View>
+                        <Text style={{color:"#707070", fontFamily:"Poppins-Medium", fontSize: 13, textAlign:"center"}}>{this.state.reminderDate}{this.state.reminderTime == "" ? "" : " | " + this.state.reminderTime}</Text>
+                    </TouchableOpacity>
                     <View></View>
                 </View>
-                <View style={{ paddingTop: "1%", paddingLeft:"3%", paddingRight:"3%",}}>
-                    <View style={{margin:"3%", flexDirection:"row", alignItems:"center", borderBottomColor:"#BABABA", borderBottomWidth: 1.5}}>
-                        <Image
-                            source={require("../../assets/label.png")}
-                            style={{
-                                resizeMode:"contain",
-                                width: 22,
-                            }}
-                        />
-                        <TextInput
-                            style={{
-                                color: "#000",
-                                fontSize: 22,
-                                fontWeight:"bold",
-                                marginLeft:"5%"
-                            }}
-                            value={this.state.reminderName}
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            placeholder="Add Label"
-                            placeholderTextColor={"#979797"}
-                            onChangeText={(text) =>  this.setState({reminderName: text})}
-                            returnKeyType="done"
-                        />
-                    </View>
-                    <TouchableOpacity onPress={() => this.setState({dateModal: true})}>
-                        <View style={{flexDirection:"row", alignItems:"center", marginLeft:"3%", marginTop:"3%"}}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={{ paddingTop: "1%", paddingLeft:"3%", paddingRight:"3%",}}>
+                        <View style={{margin:"3%", marginTop:"8%", paddingBottom: "2%", flexDirection:"row", alignItems:"center", borderBottomColor:"#BABABA", borderBottomWidth: 1}}>
+                            <Image
+                                source={require("../../assets/label.png")}
+                                style={{
+                                    height: 44,
+                                    width: 28,
+                                    marginTop: -10
+                                }}
+                            />
+                            <TextInput
+                                style={{
+                                    color: "#000",
+                                    fontSize: 22,
+                                    marginLeft:"5%",
+                                    width: "100%",
+                                    fontFamily:"Poppins-Medium"
+                                }}
+                                value={this.state.reminderName}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                placeholder="Add Label"
+                                placeholderTextColor={"#979797"}
+                                onChangeText={(text) =>  this.setState({reminderName: text})}
+                                returnKeyType="done"
+                            />
+                        </View>
+                        <View style={{flexDirection:"row", marginLeft:"3%", marginRight:"3%", marginTop:"4%",  justifyContent:"space-between"}}>
                             <View>
-                                <Text style={{marginRight:1, fontWeight:"bold"}}>{this.state.reminderDate}</Text>
+                                <Text style={{color: "#000", fontFamily:"Poppins-Medium", fontSize: 15}}>DATE & TIME</Text>
+                                <TouchableOpacity onPress={() => this.setState({dateModal: true})}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <View>
+                                            <Text style={{marginRight:1, fontSize: 13, fontFamily:"Poppins-Medium"}}>{this.state.reminderDate}</Text>
+                                        </View>
+                                        <Entypo name="chevron-small-down" size={24} color="black" style={{marginTop: -2}} />
+                                    </View>
+                                </TouchableOpacity>
                             </View>
-                            <Entypo name="chevron-small-down" size={24} color="black" />
+                            <TouchableOpacity onPress={() => this.setState({timeModal: true})}>
+                                <View style={{backgroundColor:"#E3EDD2", height: 47, width: 100, borderRadius: 10, justifyContent:"center", alignSelf:"center"}}>
+                                    <Text style={{color:"#3B4130", fontSize: 15.5, fontFamily:"Poppins-Medium", textAlign:"center"}}>{this.state.reminderTime == "" ? "Select Time" : this.state.reminderTime}</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
-                    <View style={{flexDirection:"row", justifyContent:"space-around", marginTop:"5%"}}>
-                        <View>
-                            <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor:"#3B4130", justifyContent:"center", alignItems:"center"}}>
-                                <Text style={{color:"#fff", fontWeight:"bold", fontSize: 21}}>{this.state.date_1}</Text>
-                            </View>
-                            <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_1}</Text>
-                        </View>
-                        <View>
-                            <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor:"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
-                                <Text style={{color:"#000", fontWeight:"bold", fontSize: 21}}>{this.state.date_2}</Text>
-                            </View>
-                            <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_2}</Text>
-                        </View>
-                        <View>
-                            <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor:"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
-                                <Text style={{color:"#000", fontWeight:"bold", fontSize: 21}}>{this.state.date_3}</Text>
-                            </View>
-                            <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_3}</Text>
-                        </View>
-                        <View>
-                            <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor:"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
-                                <Text style={{color:"#000", fontWeight:"bold", fontSize: 21}}>{this.state.date_4}</Text>
-                            </View>
-                            <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_4}</Text>
-                        </View>
-                        <View>
-                            <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor:"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
-                                <Text style={{color:"#000", fontWeight:"bold", fontSize: 21}}>{this.state.date_5}</Text>
-                            </View>
-                            <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_5}</Text>
-                        </View>
-                        <View>
-                            <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor:"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
-                                <Text style={{color:"#000", fontWeight:"bold", fontSize: 21}}>{this.state.date_6}</Text>
-                            </View>
-                            <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_6}</Text>
-                        </View>
-                    </View>
-                    <View style={{flexDirection:"row", marginLeft:"1.4%", marginRight:"1.4%", alignItems:"center", marginTop:"5%", justifyContent:"space-between"}}>
                         <DateTimePickerModal
                             isVisible={this.state.timeModal}
                             mode="time"
                             onConfirm={(time) => this.changeTime(time)}
                             onCancel={()=> this.setState({timeModal: false})}
                         />
-                        <Text style={{color:"#575757", fontWeight:"bold", fontSize: 45}}>{this.state.reminderTime}</Text>
-                        <TouchableOpacity onPress={() => this.setState({timeModal: true})}>
-                            <View style={{backgroundColor:"#E3EDD2", height: 47, width: 130, borderRadius: 100, justifyContent:"center", alignSelf:"center"}}>
-                                <Text style={{color:"#3B4130", fontSize: 17, fontWeight:"bold", textAlign:"center"}}>Select Time</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{marginLeft:"3%", marginRight:"3%", marginTop:"7%" }}>
-                        <TouchableOpacity>
-                            <View style={{flexDirection:"row", justifyContent:"space-between"}}>
-                                <View style={{flexDirection:"row", alignItems:"center"}}>
-                                    <Image
-                                        source={require("../../assets/repeat.png")}
-                                        style={{height: 16, width: 16}}
-                                    />
-                                    <Text style={{color:"#444444", fontWeight:"500", marginLeft: 12}}>{this.state.repeatMode}</Text>
+                        <View style={{flexDirection:"row", justifyContent:"space-around", marginTop:"5%"}}>
+                            <TouchableOpacity onPress={() => this.setState({reminderDate: this.state.date_1_unformated, reminderTrueDate: this.state.date_1_true})}>
+                                <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor: this.state.reminderDate == this.state.date_1_unformated?"#3B4130":"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
+                                    <Text style={{color:this.state.reminderDate == this.state.date_1_unformated?"#fff" : "#000", marginBottom: -3.5, fontFamily:"Poppins-Medium", fontSize: 19}}>{this.state.date_1}</Text>
                                 </View>
-                                <Entypo name="chevron-small-right" size={20} color="black" style={{padding: 0.5, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.RBSheet.open()}>
-                            <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"4.5%"}}>
-                                <View style={{flexDirection:"row", alignItems:"center"}}>
-                                    <Image
-                                        source={require("../../assets/ringtone.png")}
-                                        style={{height: 16, width: 16}}
-                                    />
-                                    <Text style={{color:"#444444", fontWeight:"500", marginLeft: 12}}>{this.state.ringtone}</Text>
+                                <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_1}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderDate: this.state.date_2_unformated, reminderTrueDate: this.state.date_2_true})}>
+                                <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor: this.state.reminderDate == this.state.date_2_unformated?"#3B4130":"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
+                                    <Text style={{color:this.state.reminderDate == this.state.date_2_unformated?"#fff" : "#000", marginBottom: -3.5, fontFamily:"Poppins-Medium", fontSize: 19}}>{this.state.date_2}</Text>
                                 </View>
-                                <Entypo name="chevron-small-right" size={20} color="black" style={{padding: 0.5, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_2}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderDate: this.state.date_3_unformated, reminderTrueDate: this.state.date_3_true})}>
+                                <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor: this.state.reminderDate == this.state.date_3_unformated?"#3B4130":"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
+                                    <Text style={{color:this.state.reminderDate == this.state.date_3_unformated?"#fff" : "#000", marginBottom: -3.5, fontFamily:"Poppins-Medium", fontSize: 19}}>{this.state.date_3}</Text>
+                                </View>
+                                <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_3}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderDate: this.state.date_4_unformated, reminderTrueDate: this.state.date_4_true})}>
+                                <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor: this.state.reminderDate == this.state.date_4_unformated?"#3B4130":"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
+                                    <Text style={{color:this.state.reminderDate == this.state.date_4_unformated?"#fff" : "#000", marginBottom: -3.5, fontFamily:"Poppins-Medium", fontSize: 19}}>{this.state.date_4}</Text>
+                                </View>
+                                <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_4}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderDate: this.state.date_5_unformated, reminderTrueDate: this.state.date_5_true})}>
+                                <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor: this.state.reminderDate == this.state.date_5_unformated?"#3B4130":"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
+                                    <Text style={{color:this.state.reminderDate == this.state.date_5_unformated?"#fff" : "#000", marginBottom: -3.5, fontFamily:"Poppins-Medium", fontSize: 19}}>{this.state.date_5}</Text>
+                                </View>
+                                <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_5}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderDate: this.state.date_6_unformated, reminderTrueDate: this.state.date_6_true})}>
+                                <View style={{height: 52, width: 52, borderRadius: 13, backgroundColor: this.state.reminderDate == this.state.date_6_unformated?"#3B4130":"#E3EDD2", justifyContent:"center", alignItems:"center"}}>
+                                    <Text style={{color:this.state.reminderDate == this.state.date_6_unformated?"#fff" : "#000", marginBottom: -3.5, fontFamily:"Poppins-Medium", fontSize: 19}}>{this.state.date_6}</Text>
+                                </View>
+                                <Text style={{textAlign:"center", marginTop:3}}>{this.state.day_6}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{marginLeft:"3%", marginRight:"3%", marginTop:"7%" }}>
+                            <TouchableOpacity onPress={() => this.setState({repeatModal: true})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/repeat.png")}
+                                            style={{height: 17, width: 17}}
+                                        />
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 12}}>{this.state.repeatMode}</Text>
+                                    </View>
+                                    <Entypo name="chevron-small-right" size={20} color="black" style={{backgroundColor:"#E3EDD2", padding: 0.5, justifyContent:"center", alignItems:"center", alignSelf:"center", borderRadius: 100}}/>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.RBSheet.open()}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"4.5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        {
+                                            this.state.ringtone === "Silent" ?
+                                                <Image
+                                                    source={require("../../assets/silent.png")}
+                                                    style={{height: 17, width: 17}}
+                                                />
+                                                :
+                                                <Image
+                                                    source={require("../../assets/ringtone.png")}
+                                                    style={{height: 17, width: 17}}
+                                                />
+                                        }
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 12}}>{this.state.ringtone}</Text>
+                                    </View>
+                                    <Entypo name="chevron-small-right" size={20} color="black" style={{backgroundColor:"#E3EDD2", padding: 0.5, justifyContent:"center", alignItems:"center", alignSelf:"center", borderRadius: 100}}/>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({vibration: !this.state.vibration})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"4.5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/vibration.png")}
+                                            style={{height: 17, width: 17}}
+                                        />
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 12}}>Vibrate</Text>
+                                    </View>
+                                    {
+                                        this.state.vibration ?
+                                            <Feather name="check" size={13} color="black" style={{padding: 4, height: 20, width: 20, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        :
+                                            <></>
+                                    }
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.setState({reminderTypeModal: true})}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"4.5%"}}>
+                                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                                        <Image
+                                            source={require("../../assets/checkmark.png")}
+                                            style={{height: 17, width: 17}}
+                                        />
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 12}}>Reminder Event</Text>
+                                    </View>
+                                    <Entypo name="chevron-small-right" size={20} color="black" style={{backgroundColor:"#E3EDD2", padding: 0.5, justifyContent:"center", alignItems:"center", alignSelf:"center", borderRadius: 100}}/>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{marginLeft:"3%", marginTop:"7%" }}>
+                            <Text style={{fontSize: 15, fontFamily:"Poppins-Medium", color:"#1D1D1D"}}>PRIORITY</Text>
+                            <View style={{marginTop:"1.5%", flexDirection:"row"}}>
+                                <TouchableOpacity onPress={() => this.setState({priority: "Low"})}>
+                                    <View style={{ height: 40, width: 84, marginRight: 10, borderRadius: 100, backgroundColor: this.state.priority==="Low"?"#51C364":"#CEFFD6", justifyContent:"center", alignSelf:"center", alignItems:"center" }}>
+                                        <Text style={{fontWeight:"500", fontSize: 15, fontFamily:"Poppins-Medium", color: this.state.priority==="Low"?"#fff":"#14FF00"}}>LOW</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.setState({priority: "Medium"})}>
+                                    <View style={{ height: 40, width: 105, borderRadius: 100, marginRight: 10, backgroundColor: this.state.priority==="Medium"?"#F3DB00":"#FCF3C6", justifyContent:"center", alignSelf:"center", alignItems:"center" }}>
+                                        <Text style={{fontWeight:"500", fontSize: 15, fontFamily:"Poppins-Medium", color: this.state.priority==="Medium"?"#fff":"#F3DB00"}}>MEDIUM</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.setState({priority: "High"})}>
+                                    <View style={{ height: 40, width: 91, borderRadius: 100, backgroundColor: this.state.priority==="High"?"#FF5C5C":"#FFE0E0", justifyContent:"center", alignSelf:"center", alignItems:"center" }}>
+                                        <Text style={{fontWeight:"500", fontSize: 15, fontFamily:"Poppins-Medium", color: this.state.priority==="High"?"#fff":"#FF8888"}}>HIGH</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.setState({vibration: !this.state.vibration})}>
-                            <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"4.5%"}}>
-                                <View style={{flexDirection:"row", alignItems:"center"}}>
-                                    <Image
-                                        source={require("../../assets/vibration.png")}
-                                        style={{height: 16, width: 16}}
+                        </View>
+                        <View style={{marginLeft:"3%", marginRight: "3%", paddingBottom: "0.7%", marginTop:"7%",  borderBottomColor:"#BABABA", borderBottomWidth: 1}}>
+                            <Text style={{fontSize: 15, fontFamily:"Poppins-Medium", color:"#1D1D1D"}}>DESCRIPTION</Text>
+                            <TextInput
+                                style={{
+                                    color: "#000",
+                                    fontSize: 14,
+                                    fontFamily:"Poppins-Medium"
+                                }}
+                                value={this.state.reminderDescription}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                placeholder="Describe the reminder event"
+                                onChangeText={(text) =>  this.setState({reminderDescription: text})}
+                                returnKeyType="done"
+                                multiline={true}
+                                numberOfLines={2}
+                            />
+                        </View>
+                        {
+                            this.state.reminderType === "Tasks" ? 
+                            <>
+                                <View style={{marginLeft:"3%", marginRight: "3%", marginTop:"7%",  borderBottomColor:"#BABABA", borderBottomWidth: 1}}>
+                                    <Text style={{fontSize: 15, fontFamily:"Poppins-Medium", color:"#1D1D1D"}}>TASKS</Text>
+                                    <TextInput
+                                        style={{
+                                            color: "#000",
+                                            fontSize: 14,
+                                            height: 50,
+                                            fontFamily:"Poppins-Medium"
+                                        }}
+                                        value={this.state.Tasks_1_Data}
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        onChangeText={(text) =>  this.setState({Tasks_1_Data: text})}
+                                        returnKeyType="done"
                                     />
-                                    <Text style={{color:"#444444", fontWeight:"500", marginLeft: 12}}>Vibrate</Text>
                                 </View>
                                 {
-                                    this.state.vibration ?
-                                        <Entypo name="check" size={13} color="black" style={{padding: 2.5, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                    this.state.is_2_Tasks_Active ?
+                                    <></>
                                     :
-                                        <></>
+                                    <TouchableOpacity style={{marginRight: "3%", marginTop: 5,}} onPress={() => this.setState({is_2_Tasks_Active: true})}>
+                                        <Text style={{textAlign: "right", color: "#587424", fontFamily:"Poppins-Medium"}}>Add new task</Text>
+                                    </TouchableOpacity>
                                 }
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.setState({reminderTypeModal: true})}>
-                            <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"4.5%"}}>
-                                <View style={{flexDirection:"row", alignItems:"center"}}>
-                                    <Image
-                                        source={require("../../assets/checkmark.png")}
-                                        style={{height: 16, width: 16}}
-                                    />
-                                    <Text style={{color:"#444444", fontWeight:"500", marginLeft: 12}}>Reminder Event</Text>
-                                </View>
-                                <Entypo name="chevron-small-right" size={20} color="black" style={{padding: 0.5, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                
+                                {
+                                    this.state.is_2_Tasks_Active ?
+                                    <>
+                                        <View style={{marginLeft:"3%", marginRight: "3%", marginTop:"2%",  borderBottomColor:"#BABABA", borderBottomWidth: 1}}>
+                                            <TextInput
+                                                style={{
+                                                    color: "#000",
+                                                    fontSize: 14,
+                                                    height: 50,
+                                                    fontFamily:"Poppins-Medium"
+                                                }}
+                                                value={this.state.Tasks_2_Data}
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                onChangeText={(text) =>  this.setState({Tasks_2_Data: text})}
+                                                returnKeyType="done"
+                                            />
+                                        </View>
+                                        {
+                                            this.state.is_3_Tasks_Active ?
+                                            <></>
+                                            :
+                                            <TouchableOpacity style={{marginRight: "3%", marginTop: 5,}} onPress={() => this.setState({is_3_Tasks_Active: true})}>
+                                                <Text style={{textAlign: "right", color: "#587424", fontFamily:"Poppins-Medium"}}>Add new task</Text>
+                                            </TouchableOpacity>
+                                        }
+                                    </>
+                                    :
+                                    <></>
+                                }
+
+                                {
+                                    this.state.is_3_Tasks_Active ?
+                                    <>
+                                        <View style={{marginLeft:"3%", marginRight: "3%", marginTop:"2%",  borderBottomColor:"#BABABA", borderBottomWidth: 1}}>
+                                            <TextInput
+                                                style={{
+                                                    color: "#000",
+                                                    fontSize: 14,
+                                                    height: 50,
+                                                    fontFamily:"Poppins-Medium"
+                                                }}
+                                                value={this.state.Tasks_3_Data}
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                onChangeText={(text) =>  this.setState({Tasks_3_Data: text})}
+                                                returnKeyType="done"
+                                            />
+                                        </View>
+                                        {
+                                            this.state.is_4_Tasks_Active ?
+                                            <></>
+                                            :
+                                            <TouchableOpacity style={{marginRight: "3%", marginTop: 5,}} onPress={() => this.setState({is_4_Tasks_Active: true})}>
+                                                <Text style={{textAlign: "right", color: "#587424", fontFamily:"Poppins-Medium"}}>Add new task</Text>
+                                            </TouchableOpacity>
+                                        }
+                                    </>
+                                    :
+                                    <></>
+                                }
+                                {
+                                    this.state.is_4_Tasks_Active ?
+                                    <>
+                                        <View style={{marginLeft:"3%", marginRight: "3%", marginTop:"2%",  borderBottomColor:"#BABABA", borderBottomWidth: 1}}>
+                                            <TextInput
+                                                style={{
+                                                    color: "#000",
+                                                    fontSize: 14,
+                                                    height: 50,
+                                                    fontFamily:"Poppins-Medium"
+                                                }}
+                                                value={this.state.Tasks_4_Data}
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                onChangeText={(text) =>  this.setState({Tasks_4_Data: text})}
+                                                returnKeyType="done"
+                                            />
+                                        </View>
+                                        {
+                                            this.state.is_5_Tasks_Active ?
+                                            <></>
+                                            :
+                                            <TouchableOpacity style={{marginRight: "3%", marginTop: 5,}} onPress={() => this.setState({is_5_Tasks_Active: true})}>
+                                                <Text style={{textAlign: "right", color: "#587424", fontFamily:"Poppins-Medium"}}>Add new task</Text>
+                                            </TouchableOpacity>
+                                        }
+                                    </>
+                                    :
+                                    <></>
+                                }
+                                {
+                                    this.state.is_5_Tasks_Active ?
+                                    <>
+                                        <View style={{marginLeft:"3%", marginRight: "3%", marginTop:"2%",  borderBottomColor:"#BABABA", borderBottomWidth: 1}}>
+                                            <TextInput
+                                                style={{
+                                                    color: "#000",
+                                                    fontSize: 14,
+                                                    height: 50,
+                                                    fontFamily:"Poppins-Medium"
+                                                }}
+                                                value={this.state.Tasks_5_Data}
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                onChangeText={(text) =>  this.setState({Tasks_5_Data: text})}
+                                                returnKeyType="done"
+                                            />
+                                        </View>
+                                    </>
+                                    :
+                                    <></>
+                                }
+                            </>
+                            :
+                            <></>
+                        }
+                        <TouchableOpacity onPress={this.addReminder}>
+                            <View style={{marginTop:"10%", marginBottom:"10%", width:"90%", borderRadius: 100, height: 56, justifyContent:"center", alignItems:"center", alignSelf:"center", backgroundColor:"#3B4130"}}>
+                                <Text style={{color:"#fff", fontFamily:"Poppins-Medium", fontSize: 17}}>CREATE</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
-                    <View style={{marginLeft:"3%", marginTop:"7%" }}>
-                        <Text style={{fontSize: 15, fontWeight:"bold", color:"#1D1D1D"}}>PRIORITY</Text>
-                        <View style={{marginTop:"3.5%", flexDirection:"row"}}>
-                            <TouchableOpacity onPress={() => this.setState({priority: "Low"})}>
-                                <View style={{ height: 40, width: 84, marginRight: 10, borderRadius: 100, backgroundColor: this.state.priority==="Low"?"#51C364":"#CEFFD6", justifyContent:"center", alignSelf:"center", alignItems:"center" }}>
-                                    <Text style={{fontWeight:"500", fontSize: 15, color: this.state.priority==="Low"?"#fff":"#14FF00"}}>LOW</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({priority: "Medium"})}>
-                                <View style={{ height: 40, width: 105, borderRadius: 100, marginRight: 10, backgroundColor: this.state.priority==="Medium"?"#F3DB00":"#FCF3C6", justifyContent:"center", alignSelf:"center", alignItems:"center" }}>
-                                    <Text style={{fontWeight:"500", fontSize: 15, color: this.state.priority==="Medium"?"#fff":"#F3DB00"}}>MEDIUM</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({priority: "High"})}>
-                                <View style={{ height: 40, width: 91, borderRadius: 100, backgroundColor: this.state.priority==="High"?"#FF5C5C":"#FFE0E0", justifyContent:"center", alignSelf:"center", alignItems:"center" }}>
-                                    <Text style={{fontWeight:"500", fontSize: 15, color: this.state.priority==="High"?"#fff":"#FF8888"}}>HIGH</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <TouchableOpacity onPress={this.addReminder}>
-                        <View style={{marginTop:"10%", width:"90%", borderRadius: 100, height: 56, justifyContent:"center", alignItems:"center", alignSelf:"center", backgroundColor:"#3B4130"}}>
-                            <Text style={{color:"#fff", fontWeight:"500", fontSize: 17}}>CREATE</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                    <Toast position="bottom" visibilityTime={2000} config={toastConfig}/>
+                </ScrollView>
                 <RBSheet
                     ref={ref => {
                         this.RBSheet = ref;
                     }}
-                    height={500}
+                    height={410}
                     openDuration={250}
                     customStyles={{
                         container: {
@@ -659,11 +1046,11 @@ export default class createReminder extends React.Component {
                     <View>
                         <View style={{flexDirection:"row", justifyContent:"space-between", margin:"5%", marginBottom:"4%", alignItems:"center"}}>
                             <TouchableOpacity onPress={this.handleSoneDone}>
-                                <Text style={{color:"#9F9F9F", fontWeight:"bold", fontSize: 13}}>Cancel</Text>
+                                <Text style={{color:"#9F9F9F", fontFamily:"Poppins-Medium", fontSize: 13}}>Cancel</Text>
                             </TouchableOpacity>
-                            <Text style={{fontSize: 18, color:"#1E1E1E", fontWeight:"bold"}}>Sound</Text>
+                            <Text style={{fontSize: 18, color:"#1E1E1E", fontFamily:"Poppins-Medium"}}>Sound</Text>
                             <TouchableOpacity onPress={this.handleSoneDone}>
-                                <Text style={{color:"#3B4130", fontWeight:"bold", fontSize: 13}}>Done</Text>
+                                <Text style={{color:"#3B4130", fontFamily:"Poppins-Medium", fontSize: 13}}>Done</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={{ borderTopColor:"#EBEBEB", borderTopWidth: 1}}></View>
@@ -672,86 +1059,86 @@ export default class createReminder extends React.Component {
                             style={{resizeMode:"contain", justifyContent:"center", alignItems:"center", alignSelf:"center", marginTop:"6%"}}
                         />
                         <View style={{margin:"5%", marginTop:"7%"}}>
-                            <TouchableOpacity onPress={() => this.setState({ringtone: "silent"})}>
+                            <TouchableOpacity onPress={() => {this.setState({ringtone: "Silent", ringtoneFile:"silent"}); this.stopSong()}}>
                                 <View style={{flexDirection:"row", justifyContent:"space-between"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/silent.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Silent</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Silent</Text>
                                     </View>
                                     {
-                                        this.state.ringtone === "silent" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                        this.state.ringtone === "Silent" ?
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.setState({ringtone: "Default (Fresh Start)", ringtoneFile:"default", channelId:"default"})}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                            <TouchableOpacity onPress={() => {this.setState({ringtone: "Default (Fresh Start)", ringtoneFile:"default"}); this.stopSong()}}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Default (Fresh Start)</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Default (Fresh Start)</Text>
                                     </View>
                                     {
                                         this.state.ringtone === "Default (Fresh Start)" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.changeSong("Argon", "argon.wav", "reminder-Argon")}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                            <TouchableOpacity onPress={() => this.changeSong("Argon", "argon.wav")}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Argon</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Argon</Text>
                                     </View>
                                     {
                                         this.state.ringtone === "Argon" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.changeSong("Bright Morning", "brightmorning.wav", "reminder-BrightMorning")}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                            <TouchableOpacity onPress={() => this.changeSong("Bright Morning", "brightmorning.wav")}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Bright Morning</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Bright Morning</Text>
                                     </View>
                                     {
                                         this.state.ringtone === "Bright Morning" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => this.changeSong("Carbon", "carbon.wav", "reminder-Carbon")}>
-                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"5%"}}>
+                            <TouchableOpacity onPress={() => this.changeSong("Carbon", "carbon.wav")}>
+                                <View style={{flexDirection:"row", justifyContent:"space-between", marginTop:"3.5%"}}>
                                     <View style={{flexDirection:"row", alignItems:"center"}}>
                                         <Image
                                             source={require("../../assets/ringtone.png")}
-                                            style={{height: 16, width: 16}}
+                                            style={{height: 17, width: 17}}
                                         />
-                                        <Text style={{color:"#444444", fontWeight:"bold", marginLeft: 12}}>Carbon</Text>
+                                        <Text style={{color:"#444444", fontFamily:"Poppins-Medium", marginLeft: 13.5}}>Carbon</Text>
                                     </View>
                                     {
                                         this.state.ringtone === "Carbon" ?
-                                            <Entypo name="check" size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
+                                            <Feather name="check"  size={14} color="black" style={{padding: 2, height: 18, width: 18, backgroundColor:"#E3EDD2", borderRadius: 100}}/>
                                         :
                                             <></>
                                     }

@@ -3,6 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { LogBox } from 'react-native';
+import * as Font from 'expo-font';
 
 //Pages
 import splash from './src/pages/splash';
@@ -15,6 +16,12 @@ const AuthStack = createStackNavigator();
 const DashboardStack = createStackNavigator();
 const AppLoad = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+let customFonts = {
+  'Poppins-Regular': require('./assets/fonts/Poppins-Regular.ttf'),
+  'Poppins-Medium': require('./assets/fonts/Poppins-Medium.ttf'),
+  'Poppins-SemiBold': require('./assets/fonts/Poppins-SemiBold.ttf')
+};
 
 const AuthStackScreen = ({navigation}) => {
   return(
@@ -39,20 +46,31 @@ export default class App extends Component {
     this.state = {
       checked: false,
       userData: {},
+      fontsLoaded: false,
     };
   }
   async componentDidMount()
   {
+    this._loadFontsAsync();
     LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
   }
+  async _loadFontsAsync() {
+    await Font.loadAsync(customFonts);
+    this.setState({ fontsLoaded: true });
+  }
   render() {
-    return (
-      <NavigationContainer>
-        <Drawer.Navigator initialRouteName='Home'  drawerStyle={{backgroundColor:'transparent', width:"90%"}} drawerContent={(props) => (<DrawerContent {...props} />)}>
-          <AppLoad.Screen name="Home" component={AuthStackScreen} options={{headerShown: false}}/>
-          <Drawer.Screen name="Dashboard" component={DashboardStackScreen} />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    );
+    if (!this.state.fontsLoaded) {
+      return null;
+    }
+    else{
+      return (
+        <NavigationContainer>
+          <Drawer.Navigator initialRouteName='Home'  drawerStyle={{backgroundColor:'transparent', width:"90%"}} drawerContent={(props) => (<DrawerContent {...props} />)}>
+            <AppLoad.Screen name="Home" component={AuthStackScreen} options={{headerShown: false}}/>
+            <Drawer.Screen name="Dashboard" component={DashboardStackScreen} />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      );
+    }
   }
 }
